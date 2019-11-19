@@ -18,7 +18,7 @@ String enviardatos() {
 
 
   HTTPClient Post;
-  Post.begin("http://192.168.0.5/SmartHouse/up.php");
+  Post.begin("http://empresaslaraza.com/smartHouse/getSensors.php");
   Post.addHeader("Content-Type", "application/x-www-form-urlencoded");
   Post.POST("temp=23.9");
   String payload = Post.getString();
@@ -38,11 +38,11 @@ String enviardatos() {
 
 
 
-void leerDatos() {
-  char json[200];
+String leerDatos() {
+  char json[1024];
   HTTPClient http;  //Declare an object of class HTTPClient
 
-  http.begin("http://192.168.0.5/SmartHouse/down.php");  //Specify request destination
+  http.begin("http://empresaslaraza.com/smartHouse/getSensors.php");  //Specify request destination
   int httpCode = http.GET();                                                                  //Send the request
 
   if (httpCode > 0) { //Check the returning code
@@ -51,22 +51,51 @@ void leerDatos() {
 
     Serial.println(payload);                     //Print the response payload
 
-    payload.toCharArray(json, 50);
+    payload.toCharArray(json, 1024);
 
 
   }
 
   http.end();   //Close connection
 
-  StaticJsonDocument<200> jsonBuffer;
+
+  StaticJsonDocument<1024> jsonBuffer;
 
 
-
+  Serial.println(json);
   DeserializationError error = deserializeJson(jsonBuffer, json);
+  Serial.println(jsonBuffer.size());
+  String confi="";
+  for (int x = 0; x < jsonBuffer.size(); x++) {
 
 
-  String s = jsonBuffer[0]["dato"];
-  Serial.println(s);
+   
+    String s = jsonBuffer[x]["tipo"];
+    if(s=="Temperatura/Humedad"){
+      s="T";
+      }
+      if(s=="Movimiento"){
+      s="M";
+      }
+      if(s=="Ventana"){
+      s="V";
+      }
+      if(s=="Luz"){
+      s="L";
+      }
+    
+    s += "-" ;
+    String a = jsonBuffer[x]["pin"];
+    s += a;
+    s+="/";
+    confi+=s;
+
+
+    Serial.println(s);
+  }
+
+return confi;
+
 }
 
 //-------------------------------------------------------------------------
@@ -81,35 +110,43 @@ void setup() {
 
   // Inicia Serial
   Serial.begin(115200);
+  Serial.setTimeout(200);
   Serial.println("");
 
 
   // Conexión WIFI
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) { //Cuenta hasta 50 si no se puede conectar lo cancela
-    
+
     delay(500);
     Serial.print(".");
   }
 
-  
- 
-    //para usar con ip fija
-    IPAddress ip(192, 168, 0, 156);
-    IPAddress gateway(192, 168, 0, 1);
-    IPAddress subnet(255, 255, 255, 0);
-    WiFi.config(ip, gateway, subnet);
 
-    Serial.println("");
-    Serial.println("WiFi conectado");
-    Serial.println(WiFi.localIP());
+
+  //para usar con ip fija
+  IPAddress ip(192, 168, 0, 156);
+  IPAddress gateway(192, 168, 0, 1);
+  IPAddress subnet(255, 255, 255, 0);
+  WiFi.config(ip, gateway, subnet);
+
+  Serial.println("");
+  Serial.println("WiFi conectado");
+  Serial.println(WiFi.localIP());
 
 }
 
 //--------------------------LOOP--------------------------------
 void loop() {
-  String s = enviardatos();
-  Serial.println(s);
+  String a="";
+  while (!Serial.available());
+  String opcion = Serial.readString();
+  if (opcion.substring(0, 1) == "S") {
+    a=leerDatos();
+
+  }
+Serial.print(a);
+
 
 
   delay(30000);    //Send a request every 30 seconds
