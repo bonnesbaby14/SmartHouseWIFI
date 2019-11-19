@@ -49,7 +49,7 @@ String leerDatos() {
 
     String payload = http.getString();   //Get the request response payload
 
-    Serial.println(payload);                     //Print the response payload
+                    //Print the response payload
 
     payload.toCharArray(json, 1024);
 
@@ -62,9 +62,8 @@ String leerDatos() {
   StaticJsonDocument<1024> jsonBuffer;
 
 
-  Serial.println(json);
   DeserializationError error = deserializeJson(jsonBuffer, json);
-  Serial.println(jsonBuffer.size());
+
   String confi = "";
   for (int x = 0; x < jsonBuffer.size(); x++) {
 
@@ -74,12 +73,13 @@ String leerDatos() {
     
     String d = jsonBuffer[x]["pinV"];
     String e = jsonBuffer[x]["pinP"];
-    confi+= (a+"-"+b+"-"+c+"-"+d+"-"+e+"/");
+     String f = jsonBuffer[x]["pinL"];
+    confi+= ("/"+a+"-"+b+"-"+c+"-"+d+"-"+e+"-"+f);
 
 
 
   }
-Serial.println(confi);
+
   return confi;
 
 }
@@ -97,7 +97,7 @@ void setup() {
   // Inicia Serial
   Serial.begin(115200);
   Serial.setTimeout(200);
-  Serial.println("");
+
 
 
   // Conexión WIFI
@@ -105,7 +105,7 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) { //Cuenta hasta 50 si no se puede conectar lo cancela
 
     delay(500);
-    Serial.print(".");
+
   }
 
 
@@ -116,9 +116,7 @@ void setup() {
   IPAddress subnet(255, 255, 255, 0);
   WiFi.config(ip, gateway, subnet);
 
-  Serial.println("");
-  Serial.println("WiFi conectado");
-  Serial.println(WiFi.localIP());
+
 
 }
 
