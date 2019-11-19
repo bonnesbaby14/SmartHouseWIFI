@@ -65,36 +65,21 @@ String leerDatos() {
   Serial.println(json);
   DeserializationError error = deserializeJson(jsonBuffer, json);
   Serial.println(jsonBuffer.size());
-  String confi="";
+  String confi = "";
   for (int x = 0; x < jsonBuffer.size(); x++) {
 
-
-   
-    String s = jsonBuffer[x]["tipo"];
-    if(s=="Temperatura/Humedad"){
-      s="T";
-      }
-      if(s=="Movimiento"){
-      s="M";
-      }
-      if(s=="Ventana"){
-      s="V";
-      }
-      if(s=="Luz"){
-      s="L";
-      }
-    
-    s += "-" ;
-    String a = jsonBuffer[x]["pin"];
-    s += a;
-    s+="/";
-    confi+=s;
+    String a = jsonBuffer[x]["nombre"];
+    String b = jsonBuffer[x]["pinT"];
+    String c = jsonBuffer[x]["pinM"];
+    String d = jsonBuffer[x]["pinV"];
+    String e = jsonBuffer[x]["pinP"];
+    confi+= (a+"-"+b+"-"+c+"-"+d+"-"+e+"/");
 
 
-    Serial.println(s);
+
   }
-
-return confi;
+Serial.println(confi);
+  return confi;
 
 }
 
@@ -138,14 +123,14 @@ void setup() {
 
 //--------------------------LOOP--------------------------------
 void loop() {
-  String a="";
+  String a = "";
   while (!Serial.available());
   String opcion = Serial.readString();
   if (opcion.substring(0, 1) == "S") {
-    a=leerDatos();
+    a = leerDatos();
 
   }
-Serial.print(a);
+  Serial.print(a);
 
 
 
