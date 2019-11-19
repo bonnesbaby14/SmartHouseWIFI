@@ -71,6 +71,7 @@ String leerDatos() {
     String a = jsonBuffer[x]["nombre"];
     String b = jsonBuffer[x]["pinT"];
     String c = jsonBuffer[x]["pinM"];
+    
     String d = jsonBuffer[x]["pinV"];
     String e = jsonBuffer[x]["pinP"];
     confi+= (a+"-"+b+"-"+c+"-"+d+"-"+e+"/");
