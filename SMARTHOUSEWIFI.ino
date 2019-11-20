@@ -117,7 +117,6 @@ void setup() {
   WiFi.config(ip, gateway, subnet);
 
 
-
 }
 
 //--------------------------LOOP--------------------------------
@@ -133,7 +132,7 @@ void loop() {
 
 
 
-  delay(30000);    //Send a request every 30 seconds
+    //Send a request every 30 seconds
 
   /*
     unsigned long currentMillis = millis();
