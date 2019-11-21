@@ -2,6 +2,7 @@
 #include <WiFiClient.h>
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
+#include <StringSplitter.h>
 
 
 //-------------------VARIABLES GLOBALES--------------------------
@@ -14,13 +15,11 @@ const char *password = "Actopan2066";
 
 //-------Función para Enviar Datos a la Base de Datos SQL--------
 
-String enviardatos() {
-
-
+String enviardatos(String valor) {
   HTTPClient Post;
-  Post.begin("http://empresaslaraza.com/smartHouse/getSensors.php");
+  Post.begin("http://empresaslaraza.com/smartHouse/setValores.php");
   Post.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  Post.POST("temp=23.9");
+  Post.POST("valorT=" + valor);
   String payload = Post.getString();
   Post.end();
   return payload;
@@ -49,7 +48,7 @@ String leerDatos() {
 
     String payload = http.getString();   //Get the request response payload
 
-                    //Print the response payload
+    //Print the response payload
 
     payload.toCharArray(json, 1024);
 
@@ -59,7 +58,7 @@ String leerDatos() {
   http.end();   //Close connection
 
 
-  StaticJsonDocument<1024> jsonBuffer;
+  StaticJsonDocument<800> jsonBuffer;
 
 
   DeserializationError error = deserializeJson(jsonBuffer, json);
@@ -70,11 +69,12 @@ String leerDatos() {
     String a = jsonBuffer[x]["nombre"];
     String b = jsonBuffer[x]["pinT"];
     String c = jsonBuffer[x]["pinM"];
-    
+
     String d = jsonBuffer[x]["pinV"];
     String e = jsonBuffer[x]["pinP"];
-     String f = jsonBuffer[x]["pinL"];
-    confi+= ("/"+a+"-"+b+"-"+c+"-"+d+"-"+e+"-"+f);
+    String f = jsonBuffer[x]["pinL"];
+    String g = jsonBuffer[x]["id"];
+    confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e + "-" + f + "-" + g);
 
 
 
@@ -121,18 +121,37 @@ void setup() {
 
 //--------------------------LOOP--------------------------------
 void loop() {
+
+
   String a = "";
   while (!Serial.available());
   String opcion = Serial.readString();
   if (opcion.substring(0, 1) == "S") {
     a = leerDatos();
+    Serial.print(a);
+  }
+  if (opcion.substring(0, 1) == "A") {
+ 
+    opcion[0] = '\0';
+    ///////////////////////////////////////////////////////////777
+Serial.println(opcion);
+ enviardatos(opcion);
+
+
+ 
+    ///
+
+
+
+    ///////////////////////////////////////////////////////////////77
+
+
 
   }
-  Serial.print(a);
 
 
 
-    //Send a request every 30 seconds
+  //Send a request every 30 seconds
 
   /*
     unsigned long currentMillis = millis();
