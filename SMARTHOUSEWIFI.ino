@@ -134,7 +134,6 @@ void loop() {
  
     opcion[0] = '\0';
     ///////////////////////////////////////////////////////////777
-Serial.println(opcion);
  enviardatos(opcion);
 
 
