@@ -74,7 +74,8 @@ String leerDatos() {
     String e = jsonBuffer[x]["pinP"];
     String f = jsonBuffer[x]["pinL"];
     String g = jsonBuffer[x]["id"];
-    confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e + "-" + f + "-" + g);
+    String h = jsonBuffer[x]["temperatura"];
+    confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e + "-" + f + "-" + g+ "-" + h);
 
 
 
