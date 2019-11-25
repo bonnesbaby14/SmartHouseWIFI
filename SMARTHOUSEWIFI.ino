@@ -28,15 +28,6 @@ String enviardatos(String valor) {
 
 
 
-
-
-
-
-
-
-
-
-
 String leerDatos() {
   char json[1024];
   HTTPClient http;  //Declare an object of class HTTPClient
@@ -76,6 +67,55 @@ String leerDatos() {
     String g = jsonBuffer[x]["id"];
     String h = jsonBuffer[x]["temperatura"];
     confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e + "-" + f + "-" + g+ "-" + h);
+
+
+
+  }
+
+  return confi;
+
+}
+
+//-------------------------------------------------------------------------
+String leerDatosConfig() {
+  char json[400];
+  HTTPClient http;  //Declare an object of class HTTPClient
+
+  http.begin("http://empresaslaraza.com/smartHouse/getConfig.php");  //Specify request destination
+  int httpCode = http.GET();                                                                  //Send the request
+
+  if (httpCode > 0) { //Check the returning code
+
+    String payload = http.getString();   //Get the request response payload
+
+    //Print the response payload
+
+    payload.toCharArray(json, 400);
+
+
+  }
+
+  http.end();   //Close connection
+
+
+  StaticJsonDocument<300> jsonBuffer;
+
+
+  DeserializationError error = deserializeJson(jsonBuffer, json);
+
+  String confi = "";
+  for (int x = 0; x < jsonBuffer.size(); x++) {
+
+    String a = jsonBuffer[x]["clave 1"];
+    String b = jsonBuffer[x]["clave 2"];
+    String c = jsonBuffer[x]["clave 3"];
+
+    String d = jsonBuffer[x]["upLight"];
+    String e = jsonBuffer[x]["offLigth"];
+  //  String f = jsonBuffer[x]["pinL"];
+    //String g = jsonBuffer[x]["id"];
+    //String h = jsonBuffer[x]["temperatura"];
+    confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e);
 
 
 
@@ -126,16 +166,24 @@ void loop() {
 
   String a = "";
   while (!Serial.available());
+  
   String opcion = Serial.readString();
   if (opcion.substring(0, 1) == "S") {
     a = leerDatos();
     Serial.print(a);
+
+  }
+  if (opcion.substring(0, 1) == "H") {
+    a = leerDatosConfig();
+    Serial.print(a);
+ 
   }
   if (opcion.substring(0, 1) == "A") {
  
     opcion[0] = '\0';
     ///////////////////////////////////////////////////////////777
  enviardatos(opcion);
+
 
 
  
