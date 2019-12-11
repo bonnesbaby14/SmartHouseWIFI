@@ -8,7 +8,7 @@
 //-------------------VARIABLES GLOBALES--------------------------
 int contconexion = 0;
 
-const char *ssid = "Bebe";
+const char *ssid = "Bebe2";
 const char *password = "Actopan2066";
 
 
@@ -17,7 +17,7 @@ const char *password = "Actopan2066";
 
 String enviardatos(String valor) {
   HTTPClient Post;
-  Post.begin("http://empresaslaraza.com/smartHouse/setValores.php");
+  Post.begin("http://192.168.1.73/smartHouse/setValores.php");
   Post.addHeader("Content-Type", "application/x-www-form-urlencoded");
   Post.POST("valorT=" + valor);
   String payload = Post.getString();
@@ -32,7 +32,7 @@ String leerDatos() {
   char json[1024];
   HTTPClient http;  //Declare an object of class HTTPClient
 
-  http.begin("http://empresaslaraza.com/smartHouse/getSensors.php");  //Specify request destination
+  http.begin("http://192.168.1.73/smartHouse/getSensors.php");  //Specify request destination
   int httpCode = http.GET();                                                                  //Send the request
 
   if (httpCode > 0) { //Check the returning code
@@ -43,18 +43,18 @@ String leerDatos() {
 
     payload.toCharArray(json, 1024);
 
-
   }
 
   http.end();   //Close connection
 
 
-  StaticJsonDocument<800> jsonBuffer;
+  StaticJsonDocument<1024> jsonBuffer;
 
 
   DeserializationError error = deserializeJson(jsonBuffer, json);
 
   String confi = "";
+
   for (int x = 0; x < jsonBuffer.size(); x++) {
 
     String a = jsonBuffer[x]["nombre"];
@@ -66,7 +66,8 @@ String leerDatos() {
     String f = jsonBuffer[x]["pinL"];
     String g = jsonBuffer[x]["id"];
     String h = jsonBuffer[x]["temperatura"];
-    confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e + "-" + f + "-" + g+ "-" + h);
+     String i = jsonBuffer[x]["luz"];
+    confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e + "-" + f + "-" + g+ "-" + h+ "-" + i);
 
 
 
@@ -81,7 +82,7 @@ String leerDatosConfig() {
   char json[400];
   HTTPClient http;  //Declare an object of class HTTPClient
 
-  http.begin("http://empresaslaraza.com/smartHouse/getConfig.php");  //Specify request destination
+  http.begin("http://192.168.1.73/smartHouse/getConfig.php");  //Specify request destination
   int httpCode = http.GET();                                                                  //Send the request
 
   if (httpCode > 0) { //Check the returning code
@@ -90,7 +91,7 @@ String leerDatosConfig() {
 
     //Print the response payload
 
-    payload.toCharArray(json, 400);
+    payload.toCharArray(json, 500);
 
 
   }
@@ -98,7 +99,7 @@ String leerDatosConfig() {
   http.end();   //Close connection
 
 
-  StaticJsonDocument<300> jsonBuffer;
+  StaticJsonDocument<500> jsonBuffer;
 
 
   DeserializationError error = deserializeJson(jsonBuffer, json);
@@ -112,10 +113,10 @@ String leerDatosConfig() {
 
     String d = jsonBuffer[x]["upLight"];
     String e = jsonBuffer[x]["offLigth"];
-  //  String f = jsonBuffer[x]["pinL"];
+    String f = jsonBuffer[x]["hora"];
     //String g = jsonBuffer[x]["id"];
     //String h = jsonBuffer[x]["temperatura"];
-    confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e);
+    confi += ("/" + a + "-" + b + "-" + c + "-" + d + "-" + e+ "-" + f);
 
 
 
@@ -152,10 +153,10 @@ void setup() {
 
 
   //para usar con ip fija
-  IPAddress ip(192, 168, 0, 156);
-  IPAddress gateway(192, 168, 0, 1);
-  IPAddress subnet(255, 255, 255, 0);
-  WiFi.config(ip, gateway, subnet);
+  //IPAddress ip(192, 168, 0, 156);
+  //IPAddress gateway(192, 168, 0, 1);
+  //IPAddress subnet(255, 255, 255, 0);
+  //WiFi.config(ip, gateway, subnet);
 
 
 }
@@ -174,6 +175,7 @@ void loop() {
 
   }
   if (opcion.substring(0, 1) == "H") {
+    
     a = leerDatosConfig();
     Serial.print(a);
  
@@ -182,7 +184,8 @@ void loop() {
  
     opcion[0] = '\0';
     ///////////////////////////////////////////////////////////777
- enviardatos(opcion);
+String s= enviardatos(opcion);
+
 
 
 
